@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import { Button, Input } from "@nextui-org/react";
 import Center from "../components/Center";
 import React from "react";
+import { URL, FakeURL } from "../lib/constants";
+import SuccessModal from "../components/SuccessModal";
 
 const Home: NextPage = () => {
   const [isValid, setIsValid] = React.useState(true);
@@ -10,36 +12,42 @@ const Home: NextPage = () => {
   const input2 = React.useRef<HTMLInputElement>(null);
   const input3 = React.useRef<HTMLInputElement>(null);
 
-  const fakeUrl = `||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||`
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [query, setQuery] = React.useState("");
 
   const onClick = () => {
     // Check if the input elements are valid
     if (input1.current && input2.current && input3.current) {
       // Get the values of the input elements
-        const value1 = input1.current.value;
-        const value2 = input2.current.value;
-        const value3 = input3.current.value;
-        // Check if the values are valid
-        if (value1 && value2 && value3) {
-            //  do things
-            const data = {
-                title: value1,
-                description: value2,
-                color: value3,
-            }
-            let objJsonStr = JSON.stringify(data);
-            let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
+      const value1 = input1.current.value;
+      const value2 = input2.current.value;
+      const value3 = input3.current.value;
+      // Check if the values are valid
+      if (value1 && value2 && value3) {
+        //  do things
+        const data = {
+          title: value1,
+          description: value2,
+          color: value3,
+        };
+        let objJsonStr = JSON.stringify(data);
+        let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
 
-            const dataQuery = `data=${objJsonB64}`;
-            const url = process.env.NODE_ENV === "development" ? `http://localhost:3000/embed?${dataQuery}` : `https://discord-embeds.vercel.app/embed?${dataQuery}`;
-
-            navigator.clipboard.writeText(fakeUrl + url);
-        }
+        setQuery(`data=${objJsonB64}`);
+        setModalVisible(true);
+      }
     }
   };
 
   return (
     <>
+      <SuccessModal
+        visible={modalVisible}
+        closeHandler={() => {
+          setModalVisible(false);
+        }}
+        url={FakeURL + `${URL}?${query}`}
+      />
       <Center classes={"mt-[12%]"}>
         <Input size="xl" ref={input1} placeholder="Title" />
       </Center>
@@ -63,7 +71,9 @@ const Home: NextPage = () => {
         />
       </Center>
       <Center classes={"mt-5"}>
-        <Button color="primary" onClick={onClick}>Save</Button>
+        <Button color="primary" onClick={onClick}>
+          Save
+        </Button>
       </Center>
     </>
   );
