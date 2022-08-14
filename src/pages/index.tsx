@@ -31,7 +31,7 @@ const Home: NextPage = () => {
             let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
 
             const dataQuery = `data=${objJsonB64}`;
-            const url = process.env.NODE_ENV === "development" ? `http://localhost:3000/embed?${dataQuery}` : `${process.env.VERCEL_URL}/embed?${dataQuery}`;
+            const url = process.env.NODE_ENV === "development" ? `http://localhost:3000/embed?${dataQuery}` : `https://discord-embeds.vercel.app/embed?${dataQuery}`;
 
             navigator.clipboard.writeText(fakeUrl + url);
         }
