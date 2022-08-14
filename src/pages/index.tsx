@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import { Button, Card, Input, Text } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import Center from "../components/Center";
-import React, { ReactNode } from "react";
+import React from "react";
 
 const Home: NextPage = () => {
   const [isValid, setIsValid] = React.useState(true);
