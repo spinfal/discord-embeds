@@ -46,7 +46,7 @@ const Home: NextPage = () => {
         closeHandler={() => {
           setModalVisible(false);
         }}
-        url={FakeURL + `${URL}/embeds?${query}`}
+        url={FakeURL + `${URL}/embed?${query}`}
       />
       <Center classes={"mt-[12%]"}>
         <Input size="xl" ref={input1} placeholder="Title" />
