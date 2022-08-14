@@ -24,17 +24,10 @@ const SuccessModal: FunctionComponent<Props> = ({
       >
         <Modal.Header>
           <Text h3>
-            Success
+            Successfully created embed!
           </Text>
         </Modal.Header>
-        <Modal.Body>
-          Embed successfully created! Click the button below to copy it to your
-          clipboard.
-        </Modal.Body>
         <Modal.Footer>
-          <Button auto flat color="error" onClick={closeHandler}>
-            Close
-          </Button>
           <Button
             auto
             onClick={() => {
@@ -42,7 +35,7 @@ const SuccessModal: FunctionComponent<Props> = ({
               navigator.clipboard.writeText(url);
             }}
           >
-            Copy
+            Copy Link
           </Button>
         </Modal.Footer>
       </Modal>
