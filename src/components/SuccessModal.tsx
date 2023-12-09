@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { Modal, Button, Text } from "@nextui-org/react";
-import { URL } from "../lib/constants";
+//import { URL } from "../lib/constants";
 
 type Props = {
   visible: boolean;

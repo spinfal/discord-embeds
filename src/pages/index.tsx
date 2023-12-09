@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@nextui-org/react";
 import Center from "../components/Center";
 import React from "react";
 import { URL, FakeURL } from "../lib/constants";
@@ -7,35 +7,48 @@ import SuccessModal from "../components/SuccessModal";
 
 const Home: NextPage = () => {
   const [isValid, setIsValid] = React.useState(true);
-  // Create 3 references to the input elements
-  const input1 = React.useRef<HTMLInputElement>(null);
-  const input2 = React.useRef<HTMLInputElement>(null);
-  const input3 = React.useRef<HTMLInputElement>(null);
+  // Create 4 references to the input elements
+  const input1 = React.useRef<HTMLInputElement>(null); // title
+  const input2 = React.useRef<HTMLTextAreaElement>(null); // desc
+  const input3 = React.useRef<HTMLInputElement>(null); // image
+  const input4 = React.useRef<HTMLInputElement>(null); // theme
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [query, setQuery] = React.useState("");
 
-  const onClick = () => {
-    // Check if the input elements are valid
-    if (input1.current && input2.current && input3.current) {
+  const onPress = () => {
+    // Check if at least title, desc, or image is provided; embed will work as long as one of these are provided
+      if ((input1.current && input1.current.value) || 
+      (input2.current && input2.current.value) || 
+      (input3.current && input3.current.value)) {
       // Get the values of the input elements
-      const value1 = input1.current.value;
-      const value2 = input2.current.value;
-      const value3 = input3.current.value;
-      // Check if the values are valid
-      if (value1 && value2 && value3) {
-        //  do things
-        const data = {
-          title: value1,
-          description: value2,
-          color: value3,
-        };
-        let objJsonStr = JSON.stringify(data);
-        let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
+      const titleValue = input1.current?.value ?? "";
+      const descValue = input2.current?.value ?? "";
+      const imageValue = input3.current?.value ?? "";
+      const themeValue = input4.current?.value ?? "";
+      //  Create data obj
+      const data = {
+        title: titleValue,
+        description: descValue,
+        imageUrl: imageValue,
+        color: themeValue,
+      };
 
-        setQuery(`data=${objJsonB64}`);
-        setModalVisible(true);
+      // Values should never not be a string, but check anyway
+      for (const key in data) {
+        if (typeof data[key as keyof typeof data] !== "string") {
+          setIsValid(false);
+          return;
+        }
       }
+
+      // Encode to base64
+      let objJsonStr = JSON.stringify(data);
+      let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
+
+      // Set /embed query then show success dialog
+      setQuery(`data=${objJsonB64}`);
+      setModalVisible(true);
     }
   };
 
@@ -52,12 +65,15 @@ const Home: NextPage = () => {
         <Input size="xl" ref={input1} placeholder="Title" />
       </Center>
       <Center classes={"mt-5"}>
-        <Input size="xl" ref={input2} placeholder="Description" />
+        <Textarea size="xl" ref={input2} className={"resize-y"} rows="6" placeholder="Description" />
+      </Center>
+      <Center classes={"mt-5"}>
+        <Input size="xl" ref={input3} placeholder="Image URL" />
       </Center>
       <Center classes={"mt-5"}>
         <Input
           size="xl"
-          ref={input3}
+          ref={input4}
           placeholder="Hex Color"
           status={isValid ? "default" : "error"}
           onChange={(e) => {
@@ -71,7 +87,7 @@ const Home: NextPage = () => {
         />
       </Center>
       <Center classes={"mt-5"}>
-        <Button color="primary" onClick={onClick}>
+        <Button color="primary" onPress={onPress}>
           Save
         </Button>
       </Center>
