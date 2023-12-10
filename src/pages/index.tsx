@@ -13,7 +13,8 @@ interface modalContent {
 }
 
 const Home: NextPage = () => {
-  const [isValid, setIsValid] = React.useState(true);
+  const [isValidColor, setIsValidColor] = React.useState(true);
+  const [isValidUrl, setIsValidUrl] = React.useState(true);
   // Create 4 references to the input elements
   const input1 = React.useRef<HTMLInputElement>(null); // title
   const input2 = React.useRef<HTMLTextAreaElement>(null); // desc
@@ -22,7 +23,6 @@ const Home: NextPage = () => {
 
   const [modalContent, setModalContent] = React.useState({} as modalContent);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [query, setQuery] = React.useState("");
 
   const onPress = () => {
     // Check if at least title, desc, or image is provided; embed will work as long as one of these are provided
@@ -58,11 +58,10 @@ const Home: NextPage = () => {
       let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
 
       // Set /embed query then show success dialog
-      setQuery(`data=${objJsonB64}`);
       setModalContent({
         text: "Successfully created embed!",
         button: "Copy Link",
-        url: `${FakeURL}${URL}/embed?${query}`
+        url: `${FakeURL}${URL}/embed?data=${objJsonB64}`
       });
       setModalVisible(true);
     } else {
@@ -98,35 +97,40 @@ const Home: NextPage = () => {
         }}
       />
       <Center classes={"mt-[12%]"}>
-        <Input size="xl" ref={input1} placeholder="Title" />
+        <Input type="text" size="xl" ref={input1} placeholder="Title" />
       </Center>
       <Center classes={"mt-5 w-200"}>
         <Textarea size="xl" ref={input2} cols={23} rows={6} placeholder="Description" />
       </Center>
       <Center classes={"mt-5"}>
-        <Input size="xl" ref={input3} placeholder="Image URL" />
+        <Input
+          type="url"
+          size="xl"
+          ref={input3}
+          placeholder="Image URL"
+          status={isValidUrl ? "default" : "error"}
+          onChange={(e) => {
+            const value = e.target.value;
+            setIsValidUrl(value.length === 0 || value.match(/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i) !== null);
+          }}
+        />
       </Center>
       <Center classes={"mt-5"}>
         <Input
+          type="text"
           size="xl"
           ref={input4}
           placeholder="Hex Color"
-          status={isValid ? "default" : "error"}
+          status={isValidColor ? "default" : "error"}
           onChange={(e) => {
             const value = e.target.value;
-            if (value.length === 0) {
-              setIsValid(true);
-            } else {
-              setIsValid(
-                value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null
-              );
-            }
+            setIsValidColor(value.length === 0 || value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null);
           }}
         />
       </Center>
       <Center classes={"mt-5"}>
         <Button color="primary" onPress={onPress}>
-          Save
+          Create
         </Button>
       </Center>
     </>
